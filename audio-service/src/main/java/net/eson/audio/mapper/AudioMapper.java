@@ -1,7 +1,7 @@
 package net.eson.audio.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.eson.audio.entity.Audio;
+import net.eson.audio.model.Audio;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -11,5 +11,4 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface AudioMapper extends BaseMapper<Audio> {
-
 }
