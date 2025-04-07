@@ -4,7 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.eson</groupId>
     <artifactId>sleep_cloud</artifactId>
+    <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
+    <modules>
+        <module>gateway-service</module>
+    </modules>
     <name>sleep_cloud</name>
     <description>sleep_cloud</description>
     <properties>
