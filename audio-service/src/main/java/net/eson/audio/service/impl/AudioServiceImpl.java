@@ -5,6 +5,7 @@ import net.eson.audio.model.Audio;
 import net.eson.audio.mapper.AudioMapper;
 import net.eson.audio.service.AudioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +20,10 @@ import java.util.List;
 public class AudioServiceImpl extends ServiceImpl<AudioMapper, Audio> implements AudioService {
 
     @Autowired
-    RedisTemplate<String,List<Audio>> redisTemplate;
+    @Qualifier("objectRedisTemplate")
+    private RedisTemplate<String, Object> objectRedisTemplate;
 
     private static final String HOT_AUDIO_KEY = "hot_audio";
-    private static final String CATEGORY_AUDIO_KEY_PREFIX = "category_audio:";
 
     @Override
     public void incrementPlayCount(long id) {
@@ -35,13 +36,14 @@ public class AudioServiceImpl extends ServiceImpl<AudioMapper, Audio> implements
 
     @Override
     public List<Audio> getTopHotAudios(int limit) {
-        List<Audio> audioList = redisTemplate.opsForValue().get(HOT_AUDIO_KEY);
+        Object cachedData = objectRedisTemplate.opsForValue().get(HOT_AUDIO_KEY);
+        List<Audio> audioList = cachedData instanceof List ? (List<Audio>) cachedData : null;
         if (audioList == null){
             List<Audio> resList = this.lambdaQuery()
                     .orderByDesc(Audio::getPlayCount)
-                    .last("LIMIT" + limit)
+                    .last("LIMIT " + limit)
                     .list();
-            redisTemplate.opsForValue().set(HOT_AUDIO_KEY,resList, Duration.ofMinutes(10));
+            objectRedisTemplate.opsForValue().set(HOT_AUDIO_KEY,resList, Duration.ofMinutes(10));
         }
         return audioList;
     }

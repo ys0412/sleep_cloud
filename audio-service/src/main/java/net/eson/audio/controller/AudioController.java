@@ -27,7 +27,7 @@ public class AudioController {
     private StringRedisTemplate redisTemplate;
 
     // 查询所有音频记录
-    @GetMapping
+    @GetMapping("/list")
     public List<Audio> list() {
         return audioService.list();
     }
@@ -39,15 +39,15 @@ public class AudioController {
     }
 
     // 新增音频记录
-    @PostMapping
+    @PostMapping("/add")
     public boolean save(@RequestBody Audio audio) {
         return audioService.save(audio);
     }
 
     // 更新音频记录
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public boolean update(@PathVariable Long id, @RequestBody Audio audio) {
-        audio.setId(id);  // 注意：确保实体类中有setId方法
+        audio.setId(id);
         return audioService.updateById(audio);
     }
 
@@ -77,7 +77,7 @@ public class AudioController {
         redisTemplate.opsForValue().increment(key, 1); // Redis 累加
 //        audioService.incrementPlayCount(id);
         // 返回音频 URL
-        return ResponseEntity.ok(Map.of("url", audio.getUrl()));
+        return ResponseEntity.ok(Map.of("url", audio.getMp3Url()));
     }
 
     // 删除音频记录

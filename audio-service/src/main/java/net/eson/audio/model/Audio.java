@@ -18,9 +18,11 @@ public class Audio {
     private Long id;
     private String title;
     private String description;
-    private String url;
+    private String mp3Url;
+    private String coverUrl;
+    private String coverRgb;
     private Integer duration;
-    private String category;
+    private Integer categoryId;
     private Integer sortOrder;
     private Integer playCount;
     private LocalDateTime createTime;

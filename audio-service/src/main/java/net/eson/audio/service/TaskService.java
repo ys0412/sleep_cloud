@@ -2,6 +2,7 @@ package net.eson.audio.service;
 
 import net.eson.audio.model.Audio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,14 +25,15 @@ public class TaskService {
     StringRedisTemplate redisTemplate;
 
     @Autowired
-    private RedisTemplate<String, List<Audio>> listTemplate;
+    @Qualifier("objectRedisTemplate")
+    private RedisTemplate<String, Object> objectRedisTemplate;
 
     @Autowired
     AudioService audioService;
 
     private static final String HOT_AUDIO_KEY = "hot_audio";
 
-    @Scheduled(fixedRate = 3000) // 每 5 分钟执行一次
+    @Scheduled(fixedRate = 300000) // 每 5 分钟执行一次
     public void syncPlayCountToDB() {
         Set<String> keys = redisTemplate.keys("play_count:*");
         if (keys == null || keys.isEmpty()) return;
@@ -83,7 +85,7 @@ public class TaskService {
 
         // 查询数据库并更新最热音频缓存
         List<Audio> hotAudios = audioService.getTopHotAudios(10); // 获取前 10 条
-        listTemplate.opsForValue().set(HOT_AUDIO_KEY, hotAudios, Duration.ofMinutes(10));
+        objectRedisTemplate.opsForValue().set(HOT_AUDIO_KEY, hotAudios, Duration.ofMinutes(10));
 
         System.out.println("Hot audio cache refreshed.");
     }
