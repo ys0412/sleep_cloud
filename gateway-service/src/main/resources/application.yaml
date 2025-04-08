@@ -1,6 +1,7 @@
 server:
   port: 8081
 
+
 spring:
   cloud:
     nacos:
@@ -15,3 +16,4 @@ spring:
             - Path=/api/**  # 所有 /api/** 的请求都会转发
           filters:
             - StripPrefix=1  # 去掉 /api 前缀
+            - JwtAuthenticationFilter
