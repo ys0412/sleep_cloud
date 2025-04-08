@@ -9,6 +9,7 @@ import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 public class JwtUtil {
@@ -41,6 +42,19 @@ public class JwtUtil {
     }
 
     public static void main(String[] args) {
-//        parseToken("eson666",)
+        String secretKey = "eson666eson666eson666eson666eson"; // 至少32位
+        long ttlMillis = 3600_000; // 1小时
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("code","helloWorld");
+        // 生成 token
+        String token = JwtUtil.generateToken(secretKey, ttlMillis, claims);
+        System.out.println("生成的JWT Token：");
+        System.out.println(token);
+
+        // 解析 token 验证内容
+        Claims parsed = JwtUtil.parseToken(secretKey, token);
+        System.out.println("解析得到的 claims：");
+        System.out.println("code: " + parsed.get("code"));
+        System.out.println("过期时间: " + parsed.getExpiration());
     }
 }
