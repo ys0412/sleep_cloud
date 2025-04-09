@@ -28,8 +28,14 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        // 获取请求的路径
+        String path = exchange.getRequest().getURI().getPath();
+        System.out.println(path);
+        // 排除某些路径，不进行JWT认证（例如登录路径）
+        if (path.startsWith("/login") || path.startsWith("/auth")) {
+            return chain.filter(exchange);  // 如果是登录或者认证请求，直接通过
+        }
         String token = exchange.getRequest().getHeaders().getFirst("Authorization");
-
         if (token != null && token.startsWith("Bearer ")) {
             try {
                 token = token.substring(7);
@@ -42,13 +48,14 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
                 // 这里可以放用户信息进请求头或全局上下文
                 exchange = exchange.mutate()
                         .request(exchange.getRequest().mutate()
-                                .header("user", claims.getSubject())
+                                .header("user", claims.getSubject()) // 只放入用户名或用户ID
                                 .build())
                         .build();
             } catch (Exception e) {
                 return onError(exchange, "Token校验失败", HttpStatus.UNAUTHORIZED);
             }
         } else {
+            System.out.println("缺少JWT Token");
             return onError(exchange, "缺少JWT Token", HttpStatus.UNAUTHORIZED);
         }
 

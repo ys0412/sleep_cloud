@@ -2,11 +2,10 @@ package net.eson;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-@ComponentScan(basePackages = {"net.eson.component"})
-@SpringBootApplication()
+@EnableDiscoveryClient
+@SpringBootApplication
 public class GatewayServiceApplication {
 
     public static void main(String[] args) {
